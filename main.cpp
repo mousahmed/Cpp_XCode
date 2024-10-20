@@ -20,28 +20,58 @@ int getUserOption()
   return userOption;
 }
 
+void printHelp()
+{
+  cout << "Help- choose options from the menu" << endl;
+  cout << "and follow the on screen instructions." << endl;
+}
+
+void printExchangeStats()
+{
+  cout << "Market looks good" << endl;
+}
+
+void placeAsk()
+{
+  cout << "Make an offer - enter the amount" << endl;
+}
+
+void placeBid()
+{
+  cout << "Make a bid - enter the amount" << endl;
+}
+
+void printWallet()
+{
+  cout << "Your wallet is empty" << endl;
+}
+
+void continueToNextTimeFrame()
+{
+  cout << "Going to next time frame" << endl;
+}
+
 void proccessUserOption(int userOption)
 {
   switch (userOption)
   {
   case 1:
-    cout << "Help- choose options from the menu" << endl;
-    cout << "and follow the on screen instructions." << endl;
+    printHelp();
     break;
   case 2:
-    cout << "Market looks good" << endl;
+    printExchangeStats();
     break;
   case 3:
-    cout << "Make an offer - enter the amount" << endl;
+    placeAsk();
     break;
   case 4:
-    cout << "Make a bid - enter the amount" << endl;
+    placeBid();
     break;
   case 5:
-    cout << "Your wallet is empty" << endl;
+    printWallet();
     break;
   case 6:
-    cout << "Going to next time frame" << endl;
+    continueToNextTimeFrame();
     break;
   default:
     cout << "Invalid input" << endl;
