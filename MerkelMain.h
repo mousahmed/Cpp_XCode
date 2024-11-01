@@ -7,17 +7,17 @@ class MerkelMain
 public:
   MerkelMain();
   void init();
-  vector<OrderBookEntry> getOrders();
+  std::vector<OrderBookEntry> getOrders() const;
 
 private:
-  vector<OrderBookEntry> orders;
-  void printOptions();
-  int getUserOption();
-  void printHelp();
-  void printExchangeStats();
+  std::vector<OrderBookEntry> orders;
+  void printOptions() const;
+  int getUserOption() const;
+  void printHelp() const;
+  void printExchangeStats() const;
   void placeAsk();
   void placeBid();
-  void printWallet();
+  void printWallet() const;
   void continueToNextTimeFrame();
   void processUserOption(int userOption, bool &running);
   void loadOrderBook();

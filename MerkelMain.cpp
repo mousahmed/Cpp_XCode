@@ -1,7 +1,6 @@
 #include <iostream>
 #include "MerkelMain.h"
-#include <vector>
-using namespace std;
+#include <limits>
 
 MerkelMain::MerkelMain()
 {
@@ -28,60 +27,67 @@ void MerkelMain::loadOrderBook()
   orders.push_back(OrderBookEntry(10200, 0.001, "2021/01/01 10:03:00", "BTC/USDT", OrderBookType::ask));
 }
 
-vector<OrderBookEntry> MerkelMain::getOrders()
+std::vector<OrderBookEntry> MerkelMain::getOrders() const
 {
   return orders;
 }
 
-void MerkelMain::printOptions()
+void MerkelMain::printOptions() const
 {
-  cout << "1: Print help" << endl;
-  cout << "2: Print exchange stats" << endl;
-  cout << "3: Place an ask" << endl;
-  cout << "4: Place a bid" << endl;
-  cout << "5: Print Wallet" << endl;
-  cout << "6: Continue" << endl;
-  cout << "7: Exit" << endl;
-  cout << "===============================" << endl;
+  std::cout << "1: Print help" << std::endl;
+  std::cout << "2: Print exchange stats" << std::endl;
+  std::cout << "3: Place an ask" << std::endl;
+  std::cout << "4: Place a bid" << std::endl;
+  std::cout << "5: Print Wallet" << std::endl;
+  std::cout << "6: Continue" << std::endl;
+  std::cout << "7: Exit" << std::endl;
+  std::cout << "===============================" << std::endl;
 }
 
-int MerkelMain::getUserOption()
+int MerkelMain::getUserOption() const
 {
   int userOption;
-  cout << "Type in 1-7" << endl;
-  cin >> userOption;
+  std::cout << "Type in 1-7" << std::endl;
+  std::cin >> userOption;
+  while (std::cin.fail() || userOption < 1 || userOption > 7)
+  {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Invalid input. Please type in 1-7" << std::endl;
+    std::cin >> userOption;
+  }
   return userOption;
 }
 
-void MerkelMain::printHelp()
+void MerkelMain::printHelp() const
 {
-  cout << "Help- choose options from the menu" << endl;
-  cout << "and follow the on screen instructions." << endl;
+  std::cout << "Help- choose options from the menu" << std::endl;
+  std::cout << "and follow the on screen instructions." << std::endl;
 }
 
-void MerkelMain::printExchangeStats()
+void MerkelMain::printExchangeStats() const
 {
-  cout << "Market looks good" << endl;
+  std::cout << "Market looks good" << std::endl;
 }
 
 void MerkelMain::placeAsk()
 {
-  cout << "Make an offer - enter the amount" << endl;
+  std::cout << "Make an offer - enter the amount" << std::endl;
 }
 
 void MerkelMain::placeBid()
 {
-  cout << "Make a bid - enter the amount" << endl;
+  std::cout << "Make a bid - enter the amount" << std::endl;
 }
 
-void MerkelMain::printWallet()
+void MerkelMain::printWallet() const
 {
-  cout << "Your wallet is empty" << endl;
+  std::cout << "Your wallet is empty" << std::endl;
 }
 
 void MerkelMain::continueToNextTimeFrame()
 {
-  cout << "Going to next time frame" << endl;
+  std::cout << "Going to next time frame" << std::endl;
 }
 
 void MerkelMain::processUserOption(int userOption, bool &running)
@@ -110,6 +116,6 @@ void MerkelMain::processUserOption(int userOption, bool &running)
     running = false;
     break;
   default:
-    cout << "Invalid input" << endl;
+    std::cout << "Invalid input" << std::endl;
   }
 }
