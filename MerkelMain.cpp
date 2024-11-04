@@ -1,5 +1,6 @@
 #include <iostream>
 #include "MerkelMain.h"
+#include "CSVReader.h"
 #include <limits>
 
 MerkelMain::MerkelMain()
@@ -21,10 +22,8 @@ void MerkelMain::init()
 
 void MerkelMain::loadOrderBook()
 {
-  orders.push_back(OrderBookEntry(10000, 0.002, "2021/01/01 10:00:00", "BTC/USDT", OrderBookType::bid));
-  orders.push_back(OrderBookEntry(10100, 0.004, "2021/01/01 10:01:00", "BTC/USDT", OrderBookType::ask));
-  orders.push_back(OrderBookEntry(9900, 0.003, "2021/01/01 10:02:00", "BTC/USDT", OrderBookType::bid));
-  orders.push_back(OrderBookEntry(10200, 0.001, "2021/01/01 10:03:00", "BTC/USDT", OrderBookType::ask));
+  orders = CSVReader::readCSV("20200317.csv");
+  std::cout << "Loaded " << orders.size() << " orders" << std::endl;
 }
 
 std::vector<OrderBookEntry> MerkelMain::getOrders() const

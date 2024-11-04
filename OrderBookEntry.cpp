@@ -6,3 +6,16 @@ OrderBookEntry::OrderBookEntry(double price, double amount, string timestamp, st
     : price(price), amount(amount), timestamp(timestamp), product(product), orderType(orderType)
 {
 }
+
+OrderBookType OrderBookEntry::stringToOrderBookType(const std::string &s)
+{
+    if (s == "ask")
+    {
+        return OrderBookType::ask;
+    }
+    if (s == "bid")
+    {
+        return OrderBookType::bid;
+    }
+    return OrderBookType::unknown;
+}
