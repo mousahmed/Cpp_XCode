@@ -48,19 +48,6 @@ double OrderBook::getHighPrice(std::vector<OrderBookEntry> &entries)
   return highPrice;
 }
 
-std::vector<OrderBookEntry> OrderBook::getOrders(OrderBookType type, std::string product, std::string timestamp)
-{
-  std::vector<OrderBookEntry> result;
-  for (const auto &order : orders)
-  {
-    if (order.orderType == type && order.product == product && order.timestamp == timestamp)
-    {
-      result.push_back(order);
-    }
-  }
-  return result;
-}
-
 double OrderBook::getPriceSpread(std::vector<OrderBookEntry> &entries)
 {
   if (entries.empty())
@@ -82,4 +69,36 @@ double OrderBook::getAveragePrice(std::vector<OrderBookEntry> &entries)
     total += entry.price;
   }
   return total / entries.size();
+}
+
+std::string OrderBook::getEarliestTime()
+{
+  if (orders.empty())
+    return "";
+  return orders.front().timestamp;
+}
+
+std::string OrderBook::getNextTime(const std::string &timestamp)
+{
+  for (const auto &order : orders)
+  {
+    if (order.timestamp > timestamp)
+    {
+      return order.timestamp;
+    }
+  }
+  return OrderBook::getEarliestTime();
+}
+
+std::vector<OrderBookEntry> OrderBook::getOrders(OrderBookType type, std::string product, std::string timestamp)
+{
+  std::vector<OrderBookEntry> result;
+  for (const auto &order : orders)
+  {
+    if (order.orderType == type && order.product == product && order.timestamp == timestamp)
+    {
+      result.push_back(order);
+    }
+  }
+  return result;
 }

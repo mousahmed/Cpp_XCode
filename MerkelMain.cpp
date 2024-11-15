@@ -10,6 +10,7 @@ void MerkelMain::init()
 {
   int input;
   bool running = true;
+  currentTime = orderBook.getEarliestTime();
   while (running)
   {
     printOptions();
@@ -57,7 +58,6 @@ void MerkelMain::printHelp() const
 
 void MerkelMain::printMarketStats()
 {
-  std::string currentTime = "2020/03/17 17:01:24.884492";
   for (const std::string &p : orderBook.getKnownProducts())
   {
     std::cout << "Product: " << p << std::endl;
@@ -86,9 +86,11 @@ void MerkelMain::printWallet()
   std::cout << "Your wallet is empty" << std::endl;
 }
 
-void MerkelMain::continueToNextTimeFrame()
+void MerkelMain::gotoNextTimeFrame()
 {
-  std::cout << "Going to next time frame" << std::endl;
+  std::cout << "Going to next time frame. " << std::endl;
+  std::cout << std::endl;
+  currentTime = orderBook.getNextTime(currentTime);
 }
 
 void MerkelMain::processUserOption(int userOption, bool &running)
@@ -111,7 +113,7 @@ void MerkelMain::processUserOption(int userOption, bool &running)
     printWallet();
     break;
   case 6:
-    continueToNextTimeFrame();
+    gotoNextTimeFrame();
     break;
   case 7:
     running = false;

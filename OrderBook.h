@@ -23,6 +23,9 @@ public:
   /** return the price spread, which is the difference between the highest and lowest prices */
   static double getPriceSpread(std::vector<OrderBookEntry> &entries);
 
+  std::string getEarliestTime();
+  std::string getNextTime(const std::string& timestamp);
+
 private:
   std::vector<OrderBookEntry> orders;
 };

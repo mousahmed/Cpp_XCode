@@ -11,6 +11,7 @@ public:
 
 private:
   OrderBook orderBook{"20200317.csv"};
+  std::string currentTime;
   void printOptions() const;
   int getUserOption() const;
   void printHelp() const;
@@ -18,7 +19,6 @@ private:
   void placeAsk();
   void placeBid();
   void printWallet();
-  void continueToNextTimeFrame();
+  void gotoNextTimeFrame();
   void processUserOption(int userOption, bool &running);
-  void loadOrderBook();
 };
