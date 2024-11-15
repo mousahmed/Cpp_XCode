@@ -1,6 +1,5 @@
 #include <iostream>
 #include "MerkelMain.h"
-#include "CSVReader.h"
 #include <limits>
 
 MerkelMain::MerkelMain()
@@ -9,7 +8,6 @@ MerkelMain::MerkelMain()
 
 void MerkelMain::init()
 {
-  loadOrderBook();
   int input;
   bool running = true;
   while (running)
@@ -18,17 +16,6 @@ void MerkelMain::init()
     input = getUserOption();
     processUserOption(input, running);
   }
-}
-
-void MerkelMain::loadOrderBook()
-{
-  orders = CSVReader::readCSV("20200317.csv");
-  std::cout << "Loaded " << orders.size() << " orders" << std::endl;
-}
-
-std::vector<OrderBookEntry> MerkelMain::getOrders() const
-{
-  return orders;
 }
 
 void MerkelMain::printOptions() const
@@ -41,6 +28,7 @@ void MerkelMain::printOptions() const
   std::cout << "6: Continue" << std::endl;
   std::cout << "7: Exit" << std::endl;
   std::cout << "===============================" << std::endl;
+  std::cout << std::endl;
 }
 
 int MerkelMain::getUserOption() const
@@ -48,12 +36,14 @@ int MerkelMain::getUserOption() const
   int userOption;
   std::cout << "Type in 1-7" << std::endl;
   std::cin >> userOption;
+  std::cout << std::endl;
   while (std::cin.fail() || userOption < 1 || userOption > 7)
   {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Invalid input. Please type in 1-7" << std::endl;
     std::cin >> userOption;
+    std::cout << std::endl;
   }
   return userOption;
 }
@@ -62,11 +52,23 @@ void MerkelMain::printHelp() const
 {
   std::cout << "Help- choose options from the menu" << std::endl;
   std::cout << "and follow the on screen instructions." << std::endl;
+  std::cout << std::endl;
 }
 
-void MerkelMain::printExchangeStats() const
+void MerkelMain::printMarketStats()
 {
-  std::cout << "Market looks good" << std::endl;
+  std::string currentTime = "2020/03/17 17:01:24.884492";
+  for (const std::string &p : orderBook.getKnownProducts())
+  {
+    std::cout << "Product: " << p << std::endl;
+    std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, p, currentTime);
+    std::cout << "Asks seen: " << entries.size() << std::endl;
+    std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
+    std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
+    std::cout << "Average ask: " << OrderBook::getAveragePrice(entries) << std::endl;
+    std::cout << "Spread: " << OrderBook::getPriceSpread(entries) << std::endl;
+    std::cout << std::endl;
+  }
 }
 
 void MerkelMain::placeAsk()
@@ -79,7 +81,7 @@ void MerkelMain::placeBid()
   std::cout << "Make a bid - enter the amount" << std::endl;
 }
 
-void MerkelMain::printWallet() const
+void MerkelMain::printWallet()
 {
   std::cout << "Your wallet is empty" << std::endl;
 }
@@ -97,7 +99,7 @@ void MerkelMain::processUserOption(int userOption, bool &running)
     printHelp();
     break;
   case 2:
-    printExchangeStats();
+    printMarketStats();
     break;
   case 3:
     placeAsk();
