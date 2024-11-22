@@ -21,10 +21,15 @@ std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
     std::getline(file, line);
     std::cout << line << std::endl;
     std::vector<std::string> tokens = tokenise(line, ',');
-    auto entryOpt = stringsToOBE(tokens);
-    if (entryOpt.has_value())
+    try
     {
-      entries.push_back(entryOpt.value());
+      auto entryOpt = stringsToOBE(tokens);
+      entries.push_back(entryOpt);
+    }
+    catch (const std::exception &e)
+    {
+      std::cerr << "Error creating OrderBookEntry: " << e.what() << std::endl;
+      continue;
     }
   }
   file.close();
@@ -70,17 +75,16 @@ std::vector<std::string> CSVReader::tokenise(std::string csvLine, char separator
  * This function takes a vector of strings as input and attempts to create an OrderBookEntry object.
  * The vector must contain exactly 5 elements: timestamp, product, order type (either "bid" or "ask"),
  * price, and amount. If the vector does not contain exactly 5 elements, or if there is an error
- * converting the price or amount to a double, the function will return an empty optional.
+ * converting the price or amount to a double.
  *
  * @param tokens A vector of strings containing the necessary data to create an OrderBookEntry.
- * @return An optional OrderBookEntry. If the input is invalid or an error occurs, returns nullopt.
+ * @return OrderBookEntry. If the input is invalid or an error occurs
  */
-std::optional<OrderBookEntry> CSVReader::stringsToOBE(std::vector<std::string> tokens)
+OrderBookEntry CSVReader::stringsToOBE(std::vector<std::string> tokens)
 {
   if (tokens.size() != 5)
   {
-    std::cerr << "Invalid number of tokens: " << tokens.size() << std::endl;
-    return std::nullopt;
+    throw std::invalid_argument("Invalid number of tokens");
   }
 
   try
@@ -94,7 +98,30 @@ std::optional<OrderBookEntry> CSVReader::stringsToOBE(std::vector<std::string> t
   }
   catch (const std::exception &e)
   {
+    std::cerr << "CSVReader::stringsToOBE Bad float! " << tokens[3] << std::endl;
+    std::cerr << "CSVReader::stringsToOBE Bad float! " << tokens[4] << std::endl;
     std::cerr << "Error creating OrderBookEntry: " << e.what() << std::endl;
-    return std::nullopt;
+    throw e;
+  }
+}
+
+OrderBookEntry CSVReader::stringsToOBE(std::string priceString,
+                                       std::string amountString,
+                                       std::string timestamp,
+                                       std::string product,
+                                       OrderBookType orderBookType)
+{
+  double price, amount;
+  try
+  {
+    double price = stod(priceString);
+    double amount = stod(amountString);
+    return OrderBookEntry(price, amount, timestamp, product, orderBookType);
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << "CSVReader::stringsToOBE Bad float! " << priceString << std::endl;
+    std::cerr << "CSVReader::stringsToOBE Bad float! " << amountString << std::endl;
+    throw std::invalid_argument("Error creating OrderBookEntry: " + std::string(e.what()));
   }
 }

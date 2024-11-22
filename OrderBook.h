@@ -25,6 +25,7 @@ public:
 
   std::string getEarliestTime();
   std::string getNextTime(const std::string& timestamp);
+  void insertOrder(OrderBookEntry& order);
 
 private:
   std::vector<OrderBookEntry> orders;

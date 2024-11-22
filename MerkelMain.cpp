@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MerkelMain.h"
 #include <limits>
+#include <string>
 
 MerkelMain::MerkelMain()
 {
@@ -34,18 +35,22 @@ void MerkelMain::printOptions() const
 
 int MerkelMain::getUserOption() const
 {
-  int userOption;
+  int userOption = 0;
+  std::string input;
   std::cout << "Type in 1-7" << std::endl;
-  std::cin >> userOption;
+  std::getline(std::cin, input);
   std::cout << std::endl;
-  while (std::cin.fail() || userOption < 1 || userOption > 7)
+  try
   {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "Invalid input. Please type in 1-7" << std::endl;
-    std::cin >> userOption;
+    userOption = std::stoi(input);
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << "MerkelMain::getUserOption(): Invalid choice" + input << std::endl;
     std::cout << std::endl;
   }
+  std::cout << "You chose: " << userOption << std::endl;
+  std::cout << std::endl;
   return userOption;
 }
 
@@ -73,12 +78,52 @@ void MerkelMain::printMarketStats()
 
 void MerkelMain::placeAsk()
 {
-  std::cout << "Make an offer - enter the amount" << std::endl;
+  std::cout << "Make an ask - enter the amount: product, price, amount, eg ETH/BTC,200,0.5" << std::endl;
+  std::string input;
+  std::getline(std::cin, input);
+  std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
+  if (tokens.size() != 3)
+  {
+    std::cerr << "MerkelMain::placeAsk(): invalid ask input" << std::endl;
+    std::cout << std::endl;
+    return;
+  }
+  try
+  {
+    std::cout << "Your input is: " << input << std::endl;
+    std::cout << std::endl;
+    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1], tokens[2], currentTime, tokens[0], OrderBookType::ask);
+    orderBook.insertOrder(obe);
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << "MerkelMain::placeAsk(): Error placing ask:" << std::endl;
+    std::cout << std::endl;
+  }
 }
 
 void MerkelMain::placeBid()
 {
-  std::cout << "Make a bid - enter the amount" << std::endl;
+  std::cout << "Make an bid - enter the amount: product,price, amount, eg ETH/BTC,200,0.5" << std::endl;
+  std::string input;
+  std::getline(std::cin, input);
+  std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
+  if (tokens.size() != 3)
+  {
+    std::cerr << "MerkelMain::placeBid(): invalid bid input" << std::endl;
+    std::cout << std::endl;
+    return;
+  }
+  try
+  {
+    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1], tokens[2], currentTime, tokens[0], OrderBookType::bid);
+    orderBook.insertOrder(obe);
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << "Error placing bid: " << e.what() << std::endl;
+    std::cout << std::endl;
+  }
 }
 
 void MerkelMain::printWallet()

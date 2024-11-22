@@ -1,5 +1,6 @@
 #include "OrderBook.h"
 #include <unordered_set>
+#include <algorithm>
 
 OrderBook::OrderBook(std::string filename)
 {
@@ -101,4 +102,10 @@ std::vector<OrderBookEntry> OrderBook::getOrders(OrderBookType type, std::string
     }
   }
   return result;
+}
+
+void OrderBook::insertOrder(OrderBookEntry &order)
+{
+  orders.push_back(order);
+  std::sort(orders.begin(), orders.end(), OrderBookEntry::compareByTimestamp);
 }
