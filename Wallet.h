@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "OrderBookEntry.h"
 class Wallet
 {
 public:
@@ -14,6 +15,10 @@ public:
   std::string toString() const;
   /** output the wallet to the ostream */
   friend std::ostream &operator<<(std::ostream &os,const Wallet &wallet);
+  /** check if the wallet can fulfill an order */
+  bool canFulfillOrder(OrderBookEntry& order);
+  /** process a sale */
+  void processSale(OrderBookEntry &sale);
 
 private:
   std::map<std::string, double> currencies;

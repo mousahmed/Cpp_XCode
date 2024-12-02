@@ -12,6 +12,9 @@ void MerkelMain::init()
   int input;
   bool running = true;
   currentTime = orderBook.getEarliestTime();
+  wallet.insertCurrency("BTC", 10);
+  wallet.insertCurrency("ETH", 100);
+  currentUsername = "simuser";
   while (running)
   {
     printOptions();
@@ -92,8 +95,21 @@ void MerkelMain::placeAsk()
   {
     std::cout << "Your input is: " << input << std::endl;
     std::cout << std::endl;
-    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1], tokens[2], currentTime, tokens[0], OrderBookType::ask);
-    orderBook.insertOrder(obe);
+    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1],
+                                                 tokens[2],
+                                                 currentTime,
+                                                 tokens[0],
+                                                 OrderBookType::ask,
+                                                 currentUsername);
+    if (wallet.canFulfillOrder(obe))
+    {
+      std::cout << "Wallet looks good. " << std::endl;
+      orderBook.insertOrder(obe);
+    }
+    else
+    {
+      std::cout << "Wallet has insufficient funds . " << std::endl;
+    }
   }
   catch (const std::exception &e)
   {
@@ -116,8 +132,21 @@ void MerkelMain::placeBid()
   }
   try
   {
-    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1], tokens[2], currentTime, tokens[0], OrderBookType::bid);
-    orderBook.insertOrder(obe);
+    OrderBookEntry obe = CSVReader::stringsToOBE(tokens[1],
+                                                 tokens[2],
+                                                 currentTime,
+                                                 tokens[0],
+                                                 OrderBookType::bid,
+                                                 currentUsername);
+    if (wallet.canFulfillOrder(obe))
+    {
+      std::cout << "Wallet looks good. " << std::endl;
+      orderBook.insertOrder(obe);
+    }
+    else
+    {
+      std::cout << "Wallet has insufficient funds . " << std::endl;
+    }
   }
   catch (const std::exception &e)
   {
@@ -128,13 +157,30 @@ void MerkelMain::placeBid()
 
 void MerkelMain::printWallet()
 {
-  std::cout << "Your wallet is empty" << std::endl;
+  std::cout << "Wallet: " << std::endl;
+  std::cout << wallet << std::endl;
+  std::cout << std::endl;
 }
 
+void MerkelMain::processSales()
+{
+  for (std::string &p : orderBook.getKnownProducts())
+  {
+    std::cout << "matching " << p << std::endl;
+    std::vector<OrderBookEntry> sales = orderBook.matchAsksToBids(p, currentTime, currentUsername);
+    std::cout << "Sales: " << sales.size() << std::endl;
+    for (OrderBookEntry &sale : sales)
+    {
+      wallet.processSale(sale);
+      std::cout << "Sale price: " << sale.price << " amount " << sale.amount << std::endl;
+    }
+    std::cout << std::endl;
+  }
+}
 void MerkelMain::gotoNextTimeFrame()
 {
+  processSales();
   std::cout << "Going to next time frame. " << std::endl;
-  std::cout << std::endl;
   currentTime = orderBook.getNextTime(currentTime);
 }
 

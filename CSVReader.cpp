@@ -6,9 +6,8 @@ CSVReader::CSVReader()
 {
 }
 
-std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
+std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFileName)
 {
-  std::string csvFileName = "20200317.csv";
   std::ifstream file(csvFileName);
   if (!file.is_open())
   {
@@ -109,14 +108,15 @@ OrderBookEntry CSVReader::stringsToOBE(std::string priceString,
                                        std::string amountString,
                                        std::string timestamp,
                                        std::string product,
-                                       OrderBookType orderBookType)
+                                       OrderBookType orderBookType,
+                                       std::string username)
 {
   double price, amount;
   try
   {
     double price = stod(priceString);
     double amount = stod(amountString);
-    return OrderBookEntry(price, amount, timestamp, product, orderBookType);
+    return OrderBookEntry(price, amount, timestamp, product, orderBookType, username);
   }
   catch (const std::exception &e)
   {

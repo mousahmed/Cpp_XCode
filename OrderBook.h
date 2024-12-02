@@ -22,10 +22,14 @@ public:
   static double getAveragePrice(std::vector<OrderBookEntry> &entries);
   /** return the price spread, which is the difference between the highest and lowest prices */
   static double getPriceSpread(std::vector<OrderBookEntry> &entries);
-
+  /** return the earliest time in the dataset */
   std::string getEarliestTime();
-  std::string getNextTime(const std::string& timestamp);
-  void insertOrder(OrderBookEntry& order);
+  /** return the next time in the dataset after the sent time */
+  std::string getNextTime(const std::string &timestamp);
+  /** insert an order into the order book */
+  void insertOrder(OrderBookEntry &order);
+  /** match asks to bids */
+  std::vector<OrderBookEntry> matchAsksToBids(std::string product, std::string timestamp, std::string currentUsername);
 
 private:
   std::vector<OrderBookEntry> orders;
